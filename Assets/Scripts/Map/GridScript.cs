@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Numerics;
+using Mirror;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Quaternion = UnityEngine.Quaternion;
@@ -8,7 +9,7 @@ using Vector3 = UnityEngine.Vector3;
 
 namespace Map
 {
-    public class GridScript : MonoBehaviour
+    public class GridScript : NetworkBehaviour
     {
         public int mapSize;
         public int itemCount;
@@ -16,6 +17,7 @@ namespace Map
         public Tile wallTile;
         public Tilemap _wallTilemap;
         public string[,] grid;
+
         [SerializeField] private GameObject _fireUp;
         [SerializeField] private GameObject _fireDown;
         [SerializeField] private GameObject _fireLeft;
@@ -27,11 +29,24 @@ namespace Map
         
         private Dictionary<string, GameObject> fireEnds = new Dictionary<string, GameObject>();
         private Dictionary<string, GameObject> fireExtensions = new Dictionary<string, GameObject>();
+        private WallGenerator _wallGenerator;
+        private MapGenerator mapGenerator;
+        private ItemGeneratorScript itemGenerator;
+        private BreakableBlockGenerator breakableBlock;
 
-        // Start is called before the first frame update
-        void Start()
+        private void Start()
         {
             grid = new string[mapSize, mapSize];
+
+            /*mapGenerator = GetComponentInChildren<MapGenerator>();
+            _wallGenerator = GetComponentInChildren<WallGenerator>();
+            itemGenerator = GetComponentInChildren<ItemGeneratorScript>();
+            breakableBlock = GetComponentInChildren<BreakableBlockGenerator>();
+            
+            mapGenerator.GenerateMap();
+            _wallGenerator.GenerateWalls();
+            itemGenerator.GenerateItemAtRandom();
+            breakableBlock.GenerateBreakableBlocks();*/
             
             FillFireObjects();
             InitArray();
@@ -166,8 +181,16 @@ namespace Map
                 return false;
             }
 
-            Instantiate(fireObject, worldCell, Quaternion.identity);
+            var fireInstance = Instantiate(fireObject, worldCell, Quaternion.identity);
+            OnCreateFireCommand(fireInstance);
             return true;
         }
+
+        [Command]
+        private void OnCreateFireCommand(GameObject fireInstance)
+        {
+            NetworkServer.Spawn(fireInstance);
+        }
+        
     }
 }

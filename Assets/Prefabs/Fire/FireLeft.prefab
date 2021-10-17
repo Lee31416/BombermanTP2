@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 6858925157021631689}
   - component: {fileID: 8896624063568716715}
   - component: {fileID: 6564222244673140286}
+  - component: {fileID: -1041922469715782042}
   m_Layer: 0
   m_Name: FireLeft
   m_TagString: Untagged
@@ -142,3 +143,20 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.16, y: 0.16}
   m_EdgeRadius: 0
+--- !u!114 &-1041922469715782042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4420243662325516165}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9b91ecbcc199f4492b9a91e820070131, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sceneId: 0
+  serverOnly: 0
+  visible: 0
+  m_AssetId: fa98dace570ad5044bac4330e6cda624
+  hasSpawned: 0

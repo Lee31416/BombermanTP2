@@ -7,8 +7,8 @@ namespace Map
     {
         [SerializeField] private Tile wall;
         [SerializeField] private GridScript _grid;
-    
-        private void Start()
+
+        public void GenerateWalls()
         {
             var tilemap = GetComponent<Tilemap>();
         

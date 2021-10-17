@@ -6,11 +6,19 @@ using UnityEngine;
 
 public class ItemCountScript : MonoBehaviour
 {
-    [SerializeField] private PlayerControl _player;
+    private PlayerControl _player;
+    public PlayerControl target
+    {
+        get => _player;
+        set => _player = value;
+    }
+    
     [SerializeField] private TextMeshProUGUI _text;
 
-    void Update()
+    private void FixedUpdate()
     {
+        if (_player == null) return;
+
         if (name == "FireCount")
         {
             _text.text = _player.firepowerCount.ToString();

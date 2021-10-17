@@ -18,12 +18,27 @@ namespace Gameplay
         [SerializeField] private GameObject _fireEndLeft;
         [SerializeField] private GameObject _fireEndRight;
         
-        public GridScript grid;
-        public PlayerControl bombLayer;
-        public int firepower = 1;
+        private GridScript _grid;
+        private PlayerControl _bombLayer;
+        private int _firepower = 1;
+        
+        public PlayerControl bombLayer
+        {
+            get => _bombLayer;
+            set => _bombLayer = value;
+        }
+        public GridScript grid
+        {
+            get => _grid;
+            set => _grid = value;
+        }
+        public int firepower
+        {
+            get => _firepower;
+            set => _firepower = value;
+        }
+        
 
-        private bool _playerIOver = false;
-    
         // Start is called before the first frame update
         void Start()
         {
@@ -35,8 +50,8 @@ namespace Gameplay
             yield return new WaitForSeconds(4);
             _animator.SetTrigger("Explode");
             var position = transform.position;
-            grid.DestroyTiles(position, firepower);
-            bombLayer.currentPlacedBombCount--;
+            _grid.DestroyTiles(position, firepower);
+            _bombLayer.currentPlacedBombCount--;
         }
 
         private void OnTriggerEnter2D(Collider2D other)

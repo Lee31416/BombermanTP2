@@ -16,7 +16,14 @@ namespace Map
         [SerializeField] private Tilemap _tilemap;
         [SerializeField] private GridScript _grid;
         
-        private void Start()
+        public void GenerateItemAtRandom()
+        {
+            HandleRandomItemGeneration("Fire");
+            HandleRandomItemGeneration("Bomb");
+            HandleRandomItemGeneration("Rollerblade");
+        }
+
+        private void HandleRandomItemGeneration(string type)
         {
             for (var i = 0; i < _grid.itemCount / 3;)
             {
@@ -32,43 +39,20 @@ namespace Map
                 var y = gridY * 0.16f;
 
                 _grid.grid[gridX, gridY] = "[I]";
-                GenerateFire(x, y);
-                i++;
-            }
-            
-            for (var i = 0; i < _grid.itemCount / 3;)
-            {
-                var gridX =  _random.Next(0, _grid.mapSize);
-                var gridY = _random.Next(0, _grid.mapSize);
 
-                if (_grid.grid[gridX, gridY] == "[W]" || (gridX == 0 && gridY == 0) || _grid.grid[gridX, gridY] == "[I]")
+                switch (type)
                 {
-                    continue;
+                    case "Bomb":
+                        GenerateBomb(x, y);
+                        break;
+                    case "Fire":
+                        GenerateFire(x, y);
+                        break;
+                    case "Rollerblade":
+                        GenerateRollerblade(x, y);
+                        break;
                 }
-                
-                var x = gridX * 0.16f;
-                var y = gridY * 0.16f;
 
-                _grid.grid[gridX, gridY] = "[I]";
-                GenerateRollerblade(x, y);
-                i++;
-            }
-            
-            for (var i = 0; i < _grid.itemCount / 3;)
-            {
-                var gridX =  _random.Next(0, _grid.mapSize);
-                var gridY = _random.Next(0, _grid.mapSize);
-
-                if (_grid.grid[gridX, gridY] == "[W]" || (gridX == 0 && gridY == 0) || _grid.grid[gridX, gridY] == "[I]")
-                {
-                    continue;
-                }
-                
-                var x = gridX * 0.16f;
-                var y = gridY * 0.16f;
-
-                _grid.grid[gridX, gridY] = "[I]";
-                GenerateBomb(x, y);
                 i++;
             }
         }
@@ -76,15 +60,6 @@ namespace Map
         private void GenerateFire(float x, float y)
         {
             Instantiate(fire, new Vector3(x, y, 0), Quaternion.identity);
-            /*var position = new Vector3Int(x,y,0);
-
-            if (_grid.grid[x, y] == "[W]" || (x == 0 && y == 0))
-            {
-                return;
-            }
-
-            _grid.grid[x, y] = "[B]";
-            _tilemap.SetTile(position, fireTile);*/
         }
         
         private void GenerateRollerblade(float x, float y)

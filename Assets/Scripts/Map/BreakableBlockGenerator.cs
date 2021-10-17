@@ -9,10 +9,15 @@ namespace Map
     {
         [SerializeField] private Tilemap _tilemap;
         [SerializeField] private Tile tile;
-        [SerializeField] private GridScript _grid;
+        private GridScript _grid;
         private Random _random = new Random();
+
+        private void Start()
+        {
+            _grid = GetComponentInParent<GridScript>();
+        }
         
-        void Start()
+        public void GenerateBreakableBlocks()
         {
             for (var i = 0; i < _grid.mapSize; i++)
             {

@@ -10,10 +10,13 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] private Tile ground2;
     private GridScript _grid;
 
-    // Start is called before the first frame update
-    void Start()
+    private void Start()
     {
         _grid = GetComponentInParent<GridScript>();
+    }
+
+    public void GenerateMap()
+    {
         var tilemap = GetComponent<Tilemap>();
 
         for (var x = 0; x < _grid.mapSize; x++)

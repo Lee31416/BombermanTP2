@@ -182,7 +182,10 @@ namespace Map
             }
 
             var fireInstance = Instantiate(fireObject, worldCell, Quaternion.identity);
-            OnCreateFireCommand(fireInstance);
+            if (isServer)
+            {
+                OnCreateFireCommand(fireInstance);
+            }
             return true;
         }
 

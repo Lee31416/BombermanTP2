@@ -87,7 +87,7 @@ namespace Player
 
             if (Input.GetKeyDown("f"))
             {
-               AskServerForGridData();
+               print(_isAlive);
             }
         
             _animator.SetFloat("MovementX", _movement.x);

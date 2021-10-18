@@ -15,8 +15,31 @@ namespace Map
         private void Start()
         {
             _grid = GetComponentInParent<GridScript>();
+            SetCornerBoundaries();
         }
-        
+
+        private void SetCornerBoundaries()
+        {
+            //TODO Refactor this shit
+            var max = _grid.mapSize - 1;
+            
+            _grid.grid[0, 0] = "[X]";
+            _grid.grid[0, 1] = "[X]";
+            _grid.grid[1, 0] = "[X]";
+            
+            _grid.grid[0, max] = "[X]";
+            _grid.grid[0, max-1] = "[X]";
+            _grid.grid[1, max] = "[X]";
+            
+            _grid.grid[max-1, max] = "[X]";
+            _grid.grid[max, max] = "[X]";
+            _grid.grid[max, max-1] = "[X]";
+            
+            _grid.grid[max-1, 0] = "[X]";
+            _grid.grid[max, 0] = "[X]";
+            _grid.grid[max, 1] = "[X]";
+        }
+
         public void GenerateBreakableBlocks()
         {
             for (var i = 0; i < _grid.mapSize; i++)
@@ -37,7 +60,7 @@ namespace Map
         {
             var position = new Vector3Int(x,y,0);
 
-            if (_grid.grid[x, y] == "[W]" || (x == 0 && y == 0))
+            if (_grid.grid[x, y] == "[W]" || _grid.grid[x, y] == "[X]")
             {
                 return;
             }

@@ -8,20 +8,14 @@ public class MapGenerator : MonoBehaviour
 {
     [SerializeField] private Tile ground1;
     [SerializeField] private Tile ground2;
-    private GridScript _grid;
 
-    private void Start()
-    {
-        _grid = GetComponentInParent<GridScript>();
-    }
-
-    public void GenerateMap()
+    public void GenerateMap(GridScript grid)
     {
         var tilemap = GetComponent<Tilemap>();
 
-        for (var x = 0; x < _grid.mapSize; x++)
+        for (var x = 0; x < grid.mapSize; x++)
         {
-            for (var y = 0; y < _grid.mapSize; y++)
+            for (var y = 0; y < grid.mapSize; y++)
             {
                 var position = new Vector3Int(x,y,0);
                 var odd = (x + y) % 2 == 1;

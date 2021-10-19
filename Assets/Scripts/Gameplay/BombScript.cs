@@ -21,6 +21,7 @@ namespace Gameplay
         private GridScript _grid;
         private PlayerControl _bombLayer;
         private int _firepower = 1;
+        private bool _hasExploded = false;
         
         public PlayerControl bombLayer
         {
@@ -49,6 +50,8 @@ namespace Gameplay
         {
             yield return new WaitForSeconds(4);
             _animator.SetTrigger("Explode");
+            _hasExploded = true;
+            ToggleIsTrigger();
             var position = transform.position;
             _grid.DestroyTiles(position, firepower);
             _bombLayer.currentPlacedBombCount--;
@@ -56,7 +59,10 @@ namespace Gameplay
 
         private void OnTriggerEnter2D(Collider2D other)
         {
-            print("BombTrigger: " + other);
+            if (!_hasExploded) return;
+            var player = other.GetComponent<PlayerControl>();
+            if (player == null) return;
+            player.Kill();
         }
 
         private void OnTriggerExit2D(Collider2D other)

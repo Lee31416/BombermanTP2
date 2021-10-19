@@ -8,13 +8,10 @@ public class BombFireScript : MonoBehaviour
 {
     private void OnTriggerEnter2D(Collider2D other)
     {
-        print("Fire Trigger: " + other.name);
-
-        if (other.name == "Player")
-        {
-            var player = other.GetComponent<PlayerControl>();
-            player.Kill();
-        }
+        print("Fire Trigger: " + other);
+        var player = other.GetComponent<PlayerControl>();
+        if (player == null) return;
+        player.Kill();
     }
 
     private void Destroy()

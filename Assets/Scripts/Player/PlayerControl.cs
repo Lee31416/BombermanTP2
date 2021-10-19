@@ -24,39 +24,27 @@ namespace Player
         public int bombCount = 1;
         public int currentPlacedBombCount = 0;
         public float _speed;
+        [SyncVar]
         private bool _isAlive = true;
         private CameraControl _cameraControl;
         private ItemCountScript[] _uiCounters;
         private GridScript _gridScript;
-        
-        [SyncVar]
         private GameObject _grid;
+        [SerializeField] private CustomNetworkManager _manager;
 
-        private void Start()
+        public void Start()
         {
-            if (isServer)
-            {
-                print("Im the server");
-                _grid = GameObject.Find("Grid");
-                _gridScript = _grid.GetComponent<GridScript>();
-                _grid.GetComponentInChildren<MapGenerator>().GenerateMap();
-                _grid.GetComponentInChildren<WallGenerator>().GenerateWalls();
-                _grid.GetComponentInChildren<BreakableBlockGenerator>().GenerateBreakableBlocks();
-                _grid.GetComponentInChildren<ItemGeneratorScript>().GenerateItemAtRandom();
-                _referenceTilemap = _grid.GetComponentInChildren<Tilemap>();
-                print("Just initialised the grid");
-                GetGridData(_grid);
-            }
+            
         }
 
         public override void OnStartLocalPlayer()
         {
-            print("test on startlocalplayer");
-            base.OnStartLocalPlayer();
-
             _cameraControl = Instantiate(_cameraPrefab).GetComponent<CameraControl>();
             _uiCounters = Instantiate(_uiPrefab).GetComponentsInChildren<ItemCountScript>();
             _cameraControl.target = gameObject;
+            
+            print("test on startlocalplayer");
+            
             
             foreach (var counter in _uiCounters)
             {
@@ -67,10 +55,7 @@ namespace Player
         private void Update()
         {
             if (!isLocalPlayer) return;
-            if (_grid == null)
-            {
-                AskServerForGridData();
-            }
+       
             Move();
 
             _speed = rollerbladeCount;
@@ -92,7 +77,6 @@ namespace Player
         
             _animator.SetFloat("MovementX", _movement.x);
             _animator.SetFloat("MovementY", _movement.y);
-            _animator.SetBool("IsAlive", _isAlive);
  
             _isMoving = _rb.velocity.x != 0 || _rb.velocity.y != 0;
             _animator.SetBool("IsMoving", _isMoving);
@@ -104,14 +88,6 @@ namespace Player
             _movement.y = Input.GetAxisRaw("Vertical");
 
             _rb.velocity = new Vector2(_movement.x * _speed / 2, _movement.y * _speed / 2);
-        }
-
-        [Command]
-        private void AskServerForGridData()
-        {
-            var grid = _grid;
-            print("client asked for grid data");
-            GetGridData(grid);
         }
         
         [Command]
@@ -136,16 +112,20 @@ namespace Player
         }
         
         [ClientRpc]
-        private void GetGridData(GameObject grid)
+        public void GetGridData(GameObject grid)
         {
-            print("Received grid data from server");
             _grid = grid;
+            print("Received grid data from server: " + _grid);
         }
         
         [TargetRpc]
         public void Kill()
         {
             _isAlive = false;
+            _animator.SetBool("IsAlive", _isAlive);
+            _rb.velocity = new Vector2(5, 5);
+            _rb.simulated = false;
+            enabled = false;
         }
         
     }

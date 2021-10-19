@@ -10,14 +10,11 @@ namespace Map
         [SerializeField] private GameObject fire;
         [SerializeField] private GameObject bomb;
         [SerializeField] private GameObject rollerblade;
-        [SerializeField] private Tile fireTile;
-        [SerializeField] private Tile bombTile;
-        [SerializeField] private Tile rollerTile;
-        [SerializeField] private Tilemap _tilemap;
-        [SerializeField] private GridScript _grid;
+        private GridScript _grid;
         
-        public void GenerateItemAtRandom()
+        public void GenerateItemAtRandom(GridScript grid)
         {
+            _grid = grid;
             HandleRandomItemGeneration("Fire");
             HandleRandomItemGeneration("Bomb");
             HandleRandomItemGeneration("Rollerblade");

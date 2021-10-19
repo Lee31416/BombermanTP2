@@ -6,10 +6,11 @@ namespace Map
     public class WallGenerator : MonoBehaviour
     {
         [SerializeField] private Tile wall;
-        [SerializeField] private GridScript _grid;
+        private GridScript _grid;
 
-        public void GenerateWalls()
+        public void GenerateWalls(GridScript grid)
         {
+            _grid = grid;
             var tilemap = GetComponent<Tilemap>();
         
             GenerateOutsideWalls(tilemap);
@@ -32,12 +33,9 @@ namespace Map
                 return;
             }
 
-            if (x % 2 == 1 && y % 2 == 1)
-            {
-                tilemap.SetTile(position, wall);
-                _grid.grid[x, y] = "[W]";
-            }
-        
+            if (x % 2 != 1 || y % 2 != 1) return;
+            tilemap.SetTile(position, wall);
+            _grid.grid[x, y] = "[W]";
         }
 
         private void GenerateOutsideWalls(Tilemap tilemap)
@@ -48,11 +46,9 @@ namespace Map
             {
                 for (var y = 0; y < tileCount; y++)
                 {
-                    if ((x == 0 || y == 0) || (x == _grid.mapSize + 1 || y == _grid.mapSize + 1))
-                    {
-                        var position = new Vector3Int(x - 1, y - 1, 0);
-                        tilemap.SetTile(position, wall);
-                    }
+                    if ((x != 0 && y != 0) && (x != _grid.mapSize + 1 && y != _grid.mapSize + 1)) continue;
+                    var position = new Vector3Int(x - 1, y - 1, 0);
+                    tilemap.SetTile(position, wall);
                 }
             }
         }

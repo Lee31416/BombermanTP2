@@ -34,20 +34,15 @@ namespace Map
         private ItemGeneratorScript itemGenerator;
         private BreakableBlockGenerator breakableBlock;
 
-        private void Start()
+        public void InitializeSauce()
         {
+            if (mapSize % 2 == 0)
+            {
+                mapSize -= 1;
+            }
+            
             grid = new string[mapSize, mapSize];
 
-            /*mapGenerator = GetComponentInChildren<MapGenerator>();
-            _wallGenerator = GetComponentInChildren<WallGenerator>();
-            itemGenerator = GetComponentInChildren<ItemGeneratorScript>();
-            breakableBlock = GetComponentInChildren<BreakableBlockGenerator>();
-            
-            mapGenerator.GenerateMap();
-            _wallGenerator.GenerateWalls();
-            itemGenerator.GenerateItemAtRandom();
-            breakableBlock.GenerateBreakableBlocks();*/
-            
             FillFireObjects();
             InitArray();
         }

@@ -11,13 +11,7 @@ namespace Map
         [SerializeField] private Tile tile;
         private GridScript _grid;
         private Random _random = new Random();
-
-        private void Start()
-        {
-            _grid = GetComponentInParent<GridScript>();
-            SetCornerBoundaries();
-        }
-
+        
         private void SetCornerBoundaries()
         {
             //TODO Refactor this shit
@@ -40,8 +34,11 @@ namespace Map
             _grid.grid[max, 1] = "[X]";
         }
 
-        public void GenerateBreakableBlocks()
+        public void GenerateBreakableBlocks(GridScript grid)
         {
+            _grid = grid;
+            SetCornerBoundaries();
+            
             for (var i = 0; i < _grid.mapSize; i++)
             {
                 for (var j = 0; j < _grid.mapSize; j++)

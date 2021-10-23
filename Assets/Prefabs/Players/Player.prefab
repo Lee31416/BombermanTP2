@@ -142,7 +142,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8225810631656338820}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a4e96602bf5e96244959a89740edf486, type: 3}
   m_Name: 
@@ -151,15 +151,15 @@ MonoBehaviour:
   syncInterval: 0.1
   _rb: {fileID: 8225810631656338818}
   _animator: {fileID: 8225810631656338823}
-  _referenceTilemap: {fileID: 0}
-  _bombPrefab: {fileID: 1815136930890440455, guid: cc0caece896c6ae4c94a6a9b48069fdb, type: 3}
   _cameraPrefab: {fileID: 4628904786636551704, guid: e174c48d88e064145b656de00503cc39, type: 3}
   _uiPrefab: {fileID: 5089694012384978159, guid: 3b6a781096724684984cd040c5ca84aa, type: 3}
+  _networkManager: {fileID: 0}
   firepowerCount: 1
   rollerbladeCount: 1
   bombCount: 1
   currentPlacedBombCount: 0
   _speed: 0
+  grid: {fileID: 0}
 --- !u!50 &8225810631656338818
 Rigidbody2D:
   serializedVersion: 4
@@ -242,7 +242,7 @@ MonoBehaviour:
   syncMode: 0
   syncInterval: 0.1
   target: {fileID: 8225810631656338818}
-  clientAuthority: 0
+  clientAuthority: 1
   syncVelocity: 1
   clearVelocity: 0
   velocitySensitivity: 0.1

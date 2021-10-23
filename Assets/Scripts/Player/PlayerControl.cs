@@ -3,7 +3,9 @@ using Camera;
 using Gameplay;
 using Map;
 using Mirror;
+using Network;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 namespace Player
@@ -12,10 +14,9 @@ namespace Player
     {
         [SerializeField] private Rigidbody2D _rb;
         [SerializeField] private Animator _animator;
-        [SerializeField] private Tilemap _referenceTilemap;
-        [SerializeField] private GameObject _bombPrefab;
         [SerializeField] private GameObject _cameraPrefab;
         [SerializeField] private GameObject _uiPrefab;
+        [FormerlySerializedAs("_manager")] [SerializeField] private CustomNetworkManager _networkManager;
         
         private Vector2 _movement;
         private bool _isMoving = false;
@@ -24,17 +25,19 @@ namespace Player
         public int bombCount = 1;
         public int currentPlacedBombCount = 0;
         public float _speed;
+        public GameObject grid;
+        
         [SyncVar]
         private bool _isAlive = true;
         private CameraControl _cameraControl;
         private ItemCountScript[] _uiCounters;
         private GridScript _gridScript;
-        private GameObject _grid;
-        [SerializeField] private CustomNetworkManager _manager;
-
+        private GameManagerScript _manager;
+        
         public void Start()
         {
-            
+            _manager = GameObject.Find("GameManager").GetComponent<GameManagerScript>();
+            _networkManager = GameObject.Find("NetworkManager").GetComponent<CustomNetworkManager>();
         }
 
         public override void OnStartLocalPlayer()
@@ -62,7 +65,7 @@ namespace Player
             
             if (Input.GetMouseButtonDown(0) && currentPlacedBombCount < bombCount)
             {
-               OnLayBombCommand();
+                _networkManager.OnLayBombCommand(this);
             }
 
             if (Input.GetKeyDown("e"))
@@ -88,34 +91,6 @@ namespace Player
             _movement.y = Input.GetAxisRaw("Vertical");
 
             _rb.velocity = new Vector2(_movement.x * _speed / 2, _movement.y * _speed / 2);
-        }
-        
-        [Command]
-        private void OnLayBombCommand()
-        {
-            print("Hello this is the server : A client ask to lay a bomb");
-            
-            var pos = UnityEngine.Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            var cell = _referenceTilemap.WorldToCell(pos);
-            var cellCenterPos = _referenceTilemap.GetCellCenterWorld(cell);
-            var bomb = Instantiate(_bombPrefab, cellCenterPos, Quaternion.identity);
-            var bombScript = bomb.GetComponent<BombScript>();
-            
-            bombScript.firepower = firepowerCount;
-            bombScript.grid = _gridScript;
-            bombScript.bombLayer = this;
-            currentPlacedBombCount++;
-            
-            NetworkServer.Spawn(bomb);
-            
-            print("Server : Hello i shat a bomb where player told me to");
-        }
-        
-        [ClientRpc]
-        public void GetGridData(GameObject grid)
-        {
-            _grid = grid;
-            print("Received grid data from server: " + _grid);
         }
         
         [TargetRpc]

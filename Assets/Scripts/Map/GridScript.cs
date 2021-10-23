@@ -33,7 +33,13 @@ namespace Map
         private MapGenerator mapGenerator;
         private ItemGeneratorScript itemGenerator;
         private BreakableBlockGenerator breakableBlock;
+        private CustomNetworkManager _networkManager;
 
+        public void Start()
+        {
+            _networkManager = GameObject.Find("NetworkManager").GetComponent<CustomNetworkManager>();
+        }
+        
         public void InitializeSauce()
         {
             if (mapSize % 2 == 0)
@@ -179,16 +185,9 @@ namespace Map
             var fireInstance = Instantiate(fireObject, worldCell, Quaternion.identity);
             if (isServer)
             {
-                OnCreateFireCommand(fireInstance);
+                _networkManager.OnCreateFireCommand(fireInstance);
             }
             return true;
         }
-
-        [Command]
-        private void OnCreateFireCommand(GameObject fireInstance)
-        {
-            NetworkServer.Spawn(fireInstance);
-        }
-        
     }
 }

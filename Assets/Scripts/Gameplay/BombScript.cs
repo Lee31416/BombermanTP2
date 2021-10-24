@@ -1,12 +1,13 @@
 using System;
 using System.Collections;
 using Map;
+using Mirror;
 using Player;
 using UnityEngine;
 
 namespace Gameplay
 {
-    public class BombScript : MonoBehaviour
+    public class BombScript : NetworkBehaviour
     {
         [SerializeField] private Animator _animator;
         [SerializeField] private GameObject _fireUp;
@@ -21,6 +22,8 @@ namespace Gameplay
         private GridScript _grid;
         private PlayerControl _bombLayer;
         private int _firepower = 1;
+        
+        [SyncVar]   
         private bool _hasExploded = false;
         
         public PlayerControl bombLayer
@@ -39,9 +42,8 @@ namespace Gameplay
             set => _firepower = value;
         }
         
-
         // Start is called before the first frame update
-        void Start()
+        public override void OnStartServer()
         {
             StartCoroutine(Explode());
         }
@@ -49,16 +51,28 @@ namespace Gameplay
         private IEnumerator Explode()
         {
             yield return new WaitForSeconds(4);
-            _animator.SetTrigger("Explode");
             _hasExploded = true;
+            RpcBombExplodeOnClient();
+        }
+
+        [ClientRpc]
+        private void RpcBombExplodeOnClient()
+        {
+            // Animation is having error that need to be checked?
+            // _animator.SetTrigger("Explode");
+            
             ToggleIsTrigger();
             var position = transform.position;
             _grid.DestroyTiles(position, firepower);
             _bombLayer.currentPlacedBombCount--;
+            
+            NetworkServer.Destroy(gameObject);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
+            if (!isServer) return;
+            
             if (!_hasExploded) return;
             var player = other.GetComponent<PlayerControl>();
             if (player == null) return;
@@ -74,11 +88,6 @@ namespace Gameplay
         {
             var collider2D = GetComponent<BoxCollider2D>();
             collider2D.isTrigger = !collider2D.isTrigger;
-        }
-
-        private void DestroyBomb()
-        {
-            Destroy(gameObject);
         }
     }
 }

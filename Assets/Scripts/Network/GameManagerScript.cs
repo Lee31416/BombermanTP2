@@ -51,6 +51,7 @@ namespace Network
         
         private void EnableAllPlayers()
         {
+            // NOTE: This wasn't working so I enabled the PlayerControl script on the Player prefab to true by default
             foreach (var player in _networkManager.players)
             {
                 player.Value.enabled = true;

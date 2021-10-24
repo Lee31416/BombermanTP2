@@ -18,6 +18,13 @@ namespace Map
         public Tilemap _wallTilemap;
         public string[,] grid;
 
+        // TODO: Temp? Making sure we're only sending primitif values via network...
+        public enum FireType
+        {
+            Ends = 1,
+            Extensions = 2
+        }
+        
         [SerializeField] private GameObject _fireUp;
         [SerializeField] private GameObject _fireDown;
         [SerializeField] private GameObject _fireLeft;
@@ -33,14 +40,8 @@ namespace Map
         private MapGenerator mapGenerator;
         private ItemGeneratorScript itemGenerator;
         private BreakableBlockGenerator breakableBlock;
-        private CustomNetworkManager _networkManager;
 
-        public void Start()
-        {
-            _networkManager = GameObject.Find("NetworkManager").GetComponent<CustomNetworkManager>();
-        }
-        
-        public void InitializeSauce()
+        private void Awake()
         {
             if (mapSize % 2 == 0)
             {
@@ -136,14 +137,14 @@ namespace Map
 
                 if (i == firepower)
                 {
-                    if (!CreateFire(worldCellPosition, fireEnds[direction], tilemapCellPosition))
+                    if (!CreateFire(worldCellPosition, FireType.Ends, direction, tilemapCellPosition))
                     {
                         break;
                     }
                 }
                 else
                 {
-                    if (!CreateFire(worldCellPosition, fireExtensions[direction], tilemapCellPosition))
+                    if (!CreateFire(worldCellPosition, FireType.Extensions, direction, tilemapCellPosition))
                     { 
                         break;
                     }
@@ -173,7 +174,7 @@ namespace Map
             return true;
         }
 
-        private bool CreateFire(Vector3 worldCell, GameObject fireObject, Vector3Int tilemapCell)
+        private bool CreateFire(Vector3 worldCell, FireType fireType, string direction, Vector3Int tilemapCell)
         {
             var tile = _wallTilemap.GetTile<Tile>(tilemapCell);
             
@@ -182,12 +183,20 @@ namespace Map
                 return false;
             }
 
-            var fireInstance = Instantiate(fireObject, worldCell, Quaternion.identity);
-            if (isServer)
-            {
-                _networkManager.OnCreateFireCommand(fireInstance);
-            }
+            OnCreateFireCommand(worldCell, fireType, direction);
             return true;
+        }
+        
+        
+        // TODO: For now, to see if we can make fire work
+        [Command(requiresAuthority = false)]
+        private void OnCreateFireCommand(Vector3 worldCell, FireType fireType, string direction)
+        {
+            // Passing the type and the direction in the network message to retrieve it on the server
+            // as Command should only be able to get primitive values
+            var fireObject = (fireType == FireType.Ends) ? fireEnds[direction] : fireExtensions[direction];
+            var fireInstance = Instantiate(fireObject, worldCell, Quaternion.identity);
+            NetworkServer.Spawn(fireInstance);
         }
     }
 }

@@ -4,7 +4,9 @@ using Gameplay;
 using Map;
 using Mirror;
 using Player;
+using TMPro;
 using UnityEngine;
+using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 using UnityEngine.UI;
 
@@ -12,21 +14,24 @@ public class CustomNetworkManager : NetworkManager
 {
     [SerializeField] private InputField _inputAddress;
     [SerializeField] private InputField _inputUsername;
-    [SerializeField] private GameObject _hud;
+    [FormerlySerializedAs("_hud")] [SerializeField] private GameObject _mainMenu;
+    [SerializeField] private GameObject _connectionMenu;
     [SerializeField] private GameObject _whitePlayerPrefab;
+    [SerializeField] private TextMeshProUGUI _connectionMenuTitle;
 
     private int _playerCount;
     private String _playerUsername;
     private GameObject _grid;
     private GridScript _gridScript;
     private Tilemap _bombReferenceTilemap;
+    
     public Dictionary<int, PlayerControl> players = new Dictionary<int, PlayerControl>();
 
     public void StartHostOnClick()
     {
         StartHost();
         _playerUsername = _inputUsername.text == "" ? "Host" : _inputUsername.text;
-        _hud.SetActive(false);
+        _mainMenu.SetActive(false);
     }
 
     public void ConnectToIP()
@@ -34,7 +39,58 @@ public class CustomNetworkManager : NetworkManager
         networkAddress = _inputAddress.text == "" ? "localhost" : _inputAddress.text;
         _playerUsername = _inputUsername.text == "" ? "Bomberman" : _inputUsername.text;
         StartClient();
-        _hud.SetActive(false);
+        _mainMenu.SetActive(false);
+        _connectionMenu.SetActive(true);
+        _connectionMenuTitle.text = "Connecting to: " + networkAddress;
+    }
+
+    public void CancelConnection()
+    {
+        StopClient();
+        _mainMenu.SetActive(true);
+        _connectionMenu.SetActive(false); 
+    }
+    
+    public void UpdateStatus(TextMeshProUGUI textObj)
+    {
+        // host mode
+        // display separately because this always confused people:
+        //   Server: ...
+        //   Client: ...
+        if (NetworkServer.active && NetworkClient.active)
+        {
+            textObj.text = ($"<b>Host</b>: running via {Transport.activeTransport}");
+        }
+        // server only
+        else if (NetworkServer.active)
+        {
+            textObj.text = ($"<b>Server</b>: running via {Transport.activeTransport}");
+        }
+        // client only
+        else if (NetworkClient.isConnected)
+        {
+            textObj.text = ($"<b>Client</b>: connected to {networkAddress} via {Transport.activeTransport}");
+        }
+    }
+    
+    
+    public void HandleStopButtons()
+    {
+        // stop host if host mode
+        if (NetworkServer.active && NetworkClient.isConnected)
+        {
+            StopHost();
+        }
+        // stop client if client-only
+        else if (NetworkClient.isConnected)
+        {
+            StopClient();
+        }
+        // stop server if server-only
+        else if (NetworkServer.active)
+        {
+            StopServer();
+        }
     }
 
     public override void OnServerAddPlayer(NetworkConnection conn)
@@ -47,7 +103,7 @@ public class CustomNetworkManager : NetworkManager
         playerScript.grid = _grid;
         _playerCount++;
         players.Add(_playerCount, playerScript);
-        print("SERVER: player grid instance" + playerScript.grid);
+        //print("SERVER: player grid instance" + playerScript.grid);
     }
 
     private void InitGrid()
@@ -62,25 +118,26 @@ public class CustomNetworkManager : NetworkManager
         _bombReferenceTilemap = _grid.GetComponentInChildren<Tilemap>();
     }
     
-    public void OnLayBombCommand(PlayerControl player)
+    public void OnLayBombCommand(GameObject player)
     {
-        print("Hello this is the server : A client ask to lay a bomb");
-
+        //print("Hello this is the server : A client ask to lay a bomb");
+        print(_bombReferenceTilemap);
         var bombPrefab = spawnPrefabs[0];
-        var pos = UnityEngine.Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        var pos = player.GetComponent<Rigidbody2D>().position;
         var cell = _bombReferenceTilemap.WorldToCell(pos);
         var cellCenterPos = _bombReferenceTilemap.GetCellCenterWorld(cell);
         var bomb = Instantiate(bombPrefab, cellCenterPos, Quaternion.identity);
         var bombScript = bomb.GetComponent<BombScript>();
+        var playerScript = player.GetComponent<PlayerControl>();
             
-        bombScript.firepower = player.firepowerCount;
+        bombScript.firepower = playerScript.firepowerCount;
         bombScript.grid = _gridScript;
-        bombScript.bombLayer = player;
-        player.currentPlacedBombCount++;
+        bombScript.bombLayer = playerScript;
+        playerScript.currentPlacedBombCount++;
             
         NetworkServer.Spawn(bomb);
             
-        print("Server : Hello i shat a bomb where player told me to");
+        //print("Server : Hello i shat a bomb where player told me to");
     }
 
     public void OnCreateFireCommand(GameObject fireInstance)
@@ -90,7 +147,7 @@ public class CustomNetworkManager : NetworkManager
 
     public override void OnServerSceneChanged(string sceneName)
     {
-        print("Server: Changed scene to -> " + sceneName);
+        //print("Server: Changed scene to -> " + sceneName);
 
         if (sceneName == "Assets/Scenes/GameScene.unity")
         {

@@ -16,6 +16,7 @@ namespace Player
         [SerializeField] private Animator _animator;
         [SerializeField] private GameObject _cameraPrefab;
         [SerializeField] private GameObject _uiPrefab;
+        [SerializeField] private GameObject _pauseMenuPrefab;
         [FormerlySerializedAs("_manager")] [SerializeField] private CustomNetworkManager _networkManager;
         
         private Vector2 _movement;
@@ -26,13 +27,17 @@ namespace Player
         public int currentPlacedBombCount = 0;
         public float _speed;
         public GameObject grid;
-        
-        [SyncVar]
-        private bool _isAlive = true;
+
         private CameraControl _cameraControl;
         private ItemCountScript[] _uiCounters;
+        private PauseMenu _pauseMenu;
         private GridScript _gridScript;
         private GameManagerScript _manager;
+        
+        [SyncVar]
+        private Vector3 _position;
+        [SyncVar]
+        private bool _isAlive = true;
         
         public void Start()
         {
@@ -44,10 +49,9 @@ namespace Player
         {
             _cameraControl = Instantiate(_cameraPrefab).GetComponent<CameraControl>();
             _uiCounters = Instantiate(_uiPrefab).GetComponentsInChildren<ItemCountScript>();
+            _pauseMenu = Instantiate(_pauseMenuPrefab).GetComponent<PauseMenu>();
             _cameraControl.target = gameObject;
-            
-            print("test on startlocalplayer");
-            
+            _pauseMenu.player = this;
             
             foreach (var counter in _uiCounters)
             {
@@ -63,9 +67,9 @@ namespace Player
 
             _speed = rollerbladeCount;
             
-            if (Input.GetMouseButtonDown(0) && currentPlacedBombCount < bombCount)
+            if (Input.GetKeyDown("space") && currentPlacedBombCount < bombCount)
             {
-                _networkManager.OnLayBombCommand(this);
+                LayBomb();
             }
 
             if (Input.GetKeyDown("e"))
@@ -83,6 +87,14 @@ namespace Player
  
             _isMoving = _rb.velocity.x != 0 || _rb.velocity.y != 0;
             _animator.SetBool("IsMoving", _isMoving);
+
+            _position = _rb.position;
+        }
+
+        [Command]
+        private void LayBomb()
+        {
+            _networkManager.OnLayBombCommand(gameObject);
         }
 
         private void Move()
@@ -102,6 +114,5 @@ namespace Player
             _rb.simulated = false;
             enabled = false;
         }
-        
     }
 }

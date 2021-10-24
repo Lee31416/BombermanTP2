@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Mirror;
 using Player;
 using UnityEngine;
 
-public class ItemScript : MonoBehaviour
+public class ItemScript : NetworkBehaviour
 {
     private void OnTriggerEnter2D(Collider2D other)
     {
@@ -32,5 +33,6 @@ public class ItemScript : MonoBehaviour
         }
         
         Destroy(gameObject);
+        NetworkServer.Destroy(gameObject);
     }
 }

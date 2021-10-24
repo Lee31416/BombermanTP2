@@ -1,3 +1,4 @@
+using Mirror;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Random = System.Random;
@@ -56,17 +57,20 @@ namespace Map
 
         private void GenerateFire(float x, float y)
         {
-            Instantiate(fire, new Vector3(x, y, 0), Quaternion.identity);
+            var instance = Instantiate(fire, new Vector3(x, y, 0), Quaternion.identity);
+            NetworkServer.Spawn(instance);
         }
         
         private void GenerateRollerblade(float x, float y)
         {
-            Instantiate(rollerblade, new Vector3(x, y, 0), Quaternion.identity);
+            var instance = Instantiate(rollerblade, new Vector3(x, y, 0), Quaternion.identity);
+            NetworkServer.Spawn(instance);
         }
         
         private void GenerateBomb(float x, float y)
         {
-            Instantiate(bomb, new Vector3(x, y, 0), Quaternion.identity);
+            var instance = Instantiate(bomb, new Vector3(x, y, 0), Quaternion.identity);
+            NetworkServer.Spawn(instance);
         }
         
     }

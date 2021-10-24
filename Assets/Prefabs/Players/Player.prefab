@@ -153,6 +153,7 @@ MonoBehaviour:
   _animator: {fileID: 8225810631656338823}
   _cameraPrefab: {fileID: 4628904786636551704, guid: e174c48d88e064145b656de00503cc39, type: 3}
   _uiPrefab: {fileID: 5089694012384978159, guid: 3b6a781096724684984cd040c5ca84aa, type: 3}
+  _pauseMenuPrefab: {fileID: 8090793174612009810, guid: ce9b521977e82304eaf926e710671c17, type: 3}
   _networkManager: {fileID: 0}
   firepowerCount: 1
   rollerbladeCount: 1

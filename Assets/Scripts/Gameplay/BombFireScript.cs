@@ -9,16 +9,23 @@ public class BombFireScript : NetworkBehaviour
 {
     private void OnTriggerEnter2D(Collider2D other)
     {
-        //print("Fire Trigger: " + other);
-
         if (!isServer) return;
         var player = other.GetComponent<PlayerControl>();
         if (player == null) return;
         player.Kill();
     }
 
-    /*private void Destroy()
+    [Command(requiresAuthority = false)]
+    public void CmdDestroyFire()
     {
-        Destroy(gameObject);
-    }*/
+        RpcDestroyFire();
+    }
+    
+    [ClientRpc]
+    private void RpcDestroyFire()
+    {
+        NetworkServer.Destroy(gameObject);
+    }
+    
+    
 }

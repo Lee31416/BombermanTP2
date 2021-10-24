@@ -11,31 +11,19 @@ namespace Gameplay
     {
         [SerializeField] private Animator _animator;
         
-        private GridScript _grid;
         private PlayerControl _bombLayer;
-        private int _firepower = 1;
+        private bool _animationFinished = false;
         
         [SyncVar]
         private bool _hasExploded = false;
         
         public PlayerControl bombLayer
         {
-            get => _bombLayer;
             set => _bombLayer = value;
         }
-        public GridScript grid
-        {
-            get => _grid;
-            set => _grid = value;
-        }
-        public int firepower
-        {
-            get => _firepower;
-            set => _firepower = value;
-        }
-        
 
-        // Start is called before the first frame update
+        public int firepower { get; set; } = 1;
+
         void Start()
         {
             StartCoroutine(Explode());
@@ -46,6 +34,18 @@ namespace Gameplay
             yield return new WaitForSeconds(4);
             _animator.SetTrigger("Explode");
             _hasExploded = true;
+            if (isServer)
+                RpcExplodeBombOnAllClients();
+            else
+                CmdExplodeBomb();
+            /*var identity = _bombLayer.GetComponent<NetworkIdentity>();
+            RpcDecrementPlayerBombCount(identity.connectionToClient);*/
+        }
+        
+        //For now to fix this 
+        [Command(requiresAuthority = false)]
+        public void CmdExplodeBomb()
+        {
             RpcExplodeBombOnAllClients();
         }
 
@@ -54,9 +54,15 @@ namespace Gameplay
         {
             ToggleIsTrigger();
             var position = transform.position;
-            _grid.DestroyTiles(position, firepower);
+            var grid = GameObject.Find("Grid").GetComponent<GridScript>();
+            grid.DestroyTiles(position, firepower);
+        }
+
+        [TargetRpc]
+        private void RpcDecrementPlayerBombCount(NetworkConnection player)
+        {
+            print(_bombLayer);
             _bombLayer.currentPlacedBombCount--;
-            NetworkServer.Destroy(gameObject);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
@@ -77,6 +83,11 @@ namespace Gameplay
         {
             var collider2D = GetComponent<BoxCollider2D>();
             collider2D.isTrigger = !collider2D.isTrigger;
+        }
+
+        public void DestroyBombAfterAnimation()
+        {
+            NetworkServer.Destroy(gameObject);
         }
     }
 }

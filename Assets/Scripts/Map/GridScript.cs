@@ -27,6 +27,12 @@ namespace Map
         [SerializeField] private GameObject _fireEndLeft;
         [SerializeField] private GameObject _fireEndRight;
         
+        public enum FireType
+        {
+            Ends = 1,
+            Extensions = 2
+        }
+        
         private Dictionary<string, GameObject> fireEnds = new Dictionary<string, GameObject>();
         private Dictionary<string, GameObject> fireExtensions = new Dictionary<string, GameObject>();
         private WallGenerator _wallGenerator;
@@ -34,7 +40,7 @@ namespace Map
         private ItemGeneratorScript itemGenerator;
         private BreakableBlockGenerator breakableBlock;
 
-        public void Awake()
+        public void Start()
         {
             if (mapSize % 2 == 0)
             {
@@ -113,14 +119,14 @@ namespace Map
 
                 if (i == firepower)
                 {
-                    if (!CreateFire(worldCellPosition, fireEnds[direction], tilemapCellPosition))
+                    if (!CreateFire(worldCellPosition, FireType.Ends, direction,tilemapCellPosition))
                     {
                         break;
                     }
                 }
                 else
                 {
-                    if (!CreateFire(worldCellPosition, fireExtensions[direction], tilemapCellPosition))
+                    if (!CreateFire(worldCellPosition, FireType.Extensions, direction,tilemapCellPosition))
                     { 
                         break;
                     }
@@ -150,7 +156,7 @@ namespace Map
             return true;
         }
 
-        private bool CreateFire(Vector3 worldCell, GameObject fireObject, Vector3Int tilemapCell)
+        private bool CreateFire(Vector3 worldCell, FireType fireType, string direction, Vector3Int tilemapCell)
         {
             var tile = _wallTilemap.GetTile<Tile>(tilemapCell);
             
@@ -159,15 +165,17 @@ namespace Map
                 return false;
             }
 
-            OnCreateFireCommand(worldCell, fireObject);
+            OnCreateFireCommand(worldCell, fireType, direction);
             return true;
         }
         
         [Command(requiresAuthority = false)]
-        private void OnCreateFireCommand(Vector3 worldCell, GameObject fireObject/*,string direction*/)
+        private void OnCreateFireCommand(Vector3 worldCell, FireType fireType, string direction)
         {
             // Passing the type and the direction in the network message to retrieve it on the server
             // as Command should only be able to get primitive values
+            
+            var fireObject = (fireType == FireType.Ends) ? fireEnds[direction] : fireExtensions[direction];
             var fireInstance = Instantiate(fireObject, worldCell, Quaternion.identity);
             NetworkServer.Spawn(fireInstance);
         }

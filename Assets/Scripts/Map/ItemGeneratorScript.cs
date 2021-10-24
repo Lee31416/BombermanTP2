@@ -14,7 +14,7 @@ namespace Map
         
         public void GenerateItemAtRandom()
         {
-            var grid = transform.parent.GetComponent<GridScript>();
+            var grid = gameObject.GetComponent<GridScript>();
             HandleRandomItemGeneration(grid, "Fire");
             HandleRandomItemGeneration(grid, "Bomb");
             HandleRandomItemGeneration(grid, "Rollerblade");

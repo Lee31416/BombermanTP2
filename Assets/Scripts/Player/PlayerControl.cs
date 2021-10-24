@@ -40,11 +40,10 @@ namespace Player
         {
             _grid = GameObject.Find("Grid");
             _tilemap = _grid.GetComponentInChildren<Tilemap>();
-
             _grid.GetComponentInChildren<MapGenerator>().GenerateMap();
             _grid.GetComponentInChildren<WallGenerator>().GenerateWalls();
-            _grid.GetComponentInChildren<BreakableBlockGenerator>().GenerateBreakableBlocks();
-            _grid.GetComponentInChildren<ItemGeneratorScript>().GenerateItemAtRandom();
+            //_grid.GetComponentInChildren<BreakableBlockGenerator>().GenerateBreakableBlocks();
+            //_grid.GetComponentInChildren<ItemGeneratorScript>().GenerateItemAtRandom();
         }
 
         public override void OnStartLocalPlayer()
@@ -65,8 +64,6 @@ namespace Player
         {
             if (!isLocalPlayer) return;
        
-            Move();
-
             _speed = rollerbladeCount;
 
             if (Input.GetKeyDown("space") && currentPlacedBombCount < bombCount)
@@ -82,7 +79,11 @@ namespace Player
  
             _isMoving = _rb.velocity.x != 0 || _rb.velocity.y != 0;
             _animator.SetBool("IsMoving", _isMoving);
+        }
 
+        private void FixedUpdate()
+        {
+            Move();
         }
 
         [Command]
@@ -92,10 +93,8 @@ namespace Player
             var bombScript = bomb.GetComponent<BombScript>();
             
             bombScript.firepower = firepowerCount;
-            bombScript.grid = _grid.GetComponent<GridScript>();
             bombScript.bombLayer = this;
             currentPlacedBombCount++;
-            
             NetworkServer.Spawn(bomb);
         }
 

@@ -51,8 +51,6 @@ namespace Network
         
         private void EnableAllPlayers()
         {
-            print(_networkManager.players);
-            
             foreach (var player in _networkManager.players)
             {
                 player.Value.enabled = true;

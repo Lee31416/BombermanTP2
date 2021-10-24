@@ -14,9 +14,9 @@ namespace Menu
             Application.Quit();    
         }
 
-        public void RestartGame()
+        public void BackToMainMenu()
         {
-            SceneManager.LoadScene(1);
-        }
+            SceneManager.LoadScene(0);
+        } 
     }
 }

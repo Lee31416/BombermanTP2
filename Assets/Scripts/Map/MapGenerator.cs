@@ -9,8 +9,9 @@ public class MapGenerator : MonoBehaviour
     [SerializeField] private Tile ground1;
     [SerializeField] private Tile ground2;
 
-    public void GenerateMap(GridScript grid)
+    public void GenerateMap()
     {
+        var grid = transform.parent.GetComponent<GridScript>();
         var tilemap = GetComponent<Tilemap>();
 
         for (var x = 0; x < grid.mapSize; x++)

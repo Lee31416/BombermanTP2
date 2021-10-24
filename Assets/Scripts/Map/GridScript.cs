@@ -33,14 +33,8 @@ namespace Map
         private MapGenerator mapGenerator;
         private ItemGeneratorScript itemGenerator;
         private BreakableBlockGenerator breakableBlock;
-        private CustomNetworkManager _networkManager;
 
-        public void Start()
-        {
-            _networkManager = GameObject.Find("NetworkManager").GetComponent<CustomNetworkManager>();
-        }
-        
-        public void InitializeSauce()
+        public void Awake()
         {
             if (mapSize % 2 == 0)
             {
@@ -74,23 +68,6 @@ namespace Map
             fireExtensions.Add("Down", _fireDown);      
             fireExtensions.Add("Left", _fireLeft);      
             fireExtensions.Add("Right", _fireRight); 
-        }
-
-        public void PrintGrid()
-        {
-            var gridLayout = "";
-            
-            for (var i = 0; i < mapSize; i++)
-            {
-                for (var j = 0; j < mapSize; j++)
-                {
-                    gridLayout += grid[j, i];
-                }
-                
-                gridLayout += '\n';
-            }
-            
-            print(gridLayout);
         }
 
         public void DestroyTiles(Vector3 pos, int firepower)
@@ -182,12 +159,17 @@ namespace Map
                 return false;
             }
 
-            var fireInstance = Instantiate(fireObject, worldCell, Quaternion.identity);
-            if (isServer)
-            {
-                _networkManager.OnCreateFireCommand(fireInstance);
-            }
+            OnCreateFireCommand(worldCell, fireObject);
             return true;
+        }
+        
+        [Command(requiresAuthority = false)]
+        private void OnCreateFireCommand(Vector3 worldCell, GameObject fireObject/*,string direction*/)
+        {
+            // Passing the type and the direction in the network message to retrieve it on the server
+            // as Command should only be able to get primitive values
+            var fireInstance = Instantiate(fireObject, worldCell, Quaternion.identity);
+            NetworkServer.Spawn(fireInstance);
         }
     }
 }

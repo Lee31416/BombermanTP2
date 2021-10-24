@@ -1,26 +1,21 @@
 using System;
 using System.Collections;
 using Map;
+using Mirror;
 using Player;
 using UnityEngine;
 
 namespace Gameplay
 {
-    public class BombScript : MonoBehaviour
+    public class BombScript : NetworkBehaviour
     {
         [SerializeField] private Animator _animator;
-        [SerializeField] private GameObject _fireUp;
-        [SerializeField] private GameObject _fireDown;
-        [SerializeField] private GameObject _fireLeft;
-        [SerializeField] private GameObject _fireRight;
-        [SerializeField] private GameObject _fireEndUp;
-        [SerializeField] private GameObject _fireEndDown;
-        [SerializeField] private GameObject _fireEndLeft;
-        [SerializeField] private GameObject _fireEndRight;
         
         private GridScript _grid;
         private PlayerControl _bombLayer;
         private int _firepower = 1;
+        
+        [SyncVar]
         private bool _hasExploded = false;
         
         public PlayerControl bombLayer
@@ -51,14 +46,22 @@ namespace Gameplay
             yield return new WaitForSeconds(4);
             _animator.SetTrigger("Explode");
             _hasExploded = true;
+            RpcExplodeBombOnAllClients();
+        }
+
+        [ClientRpc]
+        private void RpcExplodeBombOnAllClients()
+        {
             ToggleIsTrigger();
             var position = transform.position;
             _grid.DestroyTiles(position, firepower);
             _bombLayer.currentPlacedBombCount--;
+            NetworkServer.Destroy(gameObject);
         }
 
         private void OnTriggerEnter2D(Collider2D other)
         {
+            if (!isServer) return;
             if (!_hasExploded) return;
             var player = other.GetComponent<PlayerControl>();
             if (player == null) return;
@@ -74,11 +77,6 @@ namespace Gameplay
         {
             var collider2D = GetComponent<BoxCollider2D>();
             collider2D.isTrigger = !collider2D.isTrigger;
-        }
-
-        private void DestroyBomb()
-        {
-            Destroy(gameObject);
         }
     }
 }

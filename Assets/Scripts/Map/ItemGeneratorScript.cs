@@ -11,24 +11,23 @@ namespace Map
         [SerializeField] private GameObject fire;
         [SerializeField] private GameObject bomb;
         [SerializeField] private GameObject rollerblade;
-        private GridScript _grid;
         
-        public void GenerateItemAtRandom(GridScript grid)
+        public void GenerateItemAtRandom()
         {
-            _grid = grid;
-            HandleRandomItemGeneration("Fire");
-            HandleRandomItemGeneration("Bomb");
-            HandleRandomItemGeneration("Rollerblade");
+            var grid = transform.parent.GetComponent<GridScript>();
+            HandleRandomItemGeneration(grid, "Fire");
+            HandleRandomItemGeneration(grid, "Bomb");
+            HandleRandomItemGeneration(grid, "Rollerblade");
         }
 
-        private void HandleRandomItemGeneration(string type)
+        private void HandleRandomItemGeneration(GridScript grid, string type)
         {
-            for (var i = 0; i < _grid.itemCount / 3;)
+            for (var i = 0; i < grid.itemCount / 3;)
             {
-                var gridX =  _random.Next(0, _grid.mapSize);
-                var gridY = _random.Next(0, _grid.mapSize);
+                var gridX =  _random.Next(0, grid.mapSize);
+                var gridY = _random.Next(0, grid.mapSize);
 
-                if (_grid.grid[gridX, gridY] == "[W]" || (gridX == 0 && gridY == 0) || _grid.grid[gridX, gridY] == "[I]")
+                if (grid.grid[gridX, gridY] == "[W]" || (gridX == 0 && gridY == 0) || grid.grid[gridX, gridY] == "[I]")
                 {
                     continue;
                 }
@@ -36,7 +35,7 @@ namespace Map
                 var x = gridX * 0.16f;
                 var y = gridY * 0.16f;
 
-                _grid.grid[gridX, gridY] = "[I]";
+                grid.grid[gridX, gridY] = "[I]";
 
                 switch (type)
                 {

@@ -14,30 +14,30 @@ public class CustomNetworkManager : NetworkManager
 {
     [SerializeField] private InputField _inputAddress;
     [SerializeField] private InputField _inputUsername;
-    [FormerlySerializedAs("_hud")] [SerializeField] private GameObject _mainMenu;
+    [SerializeField] private GameObject _mainMenu;
     [SerializeField] private GameObject _connectionMenu;
     [SerializeField] private GameObject _whitePlayerPrefab;
     [SerializeField] private TextMeshProUGUI _connectionMenuTitle;
 
     private int _playerCount;
-    private String _playerUsername;
+    /*private String _playerUsername;
     private GameObject _grid;
     private GridScript _gridScript;
-    private Tilemap _bombReferenceTilemap;
+    private Tilemap _bombReferenceTilemap;*/
     
     public Dictionary<int, PlayerControl> players = new Dictionary<int, PlayerControl>();
 
     public void StartHostOnClick()
     {
         StartHost();
-        _playerUsername = _inputUsername.text == "" ? "Host" : _inputUsername.text;
+        //_playerUsername = _inputUsername.text == "" ? "Host" : _inputUsername.text;
         _mainMenu.SetActive(false);
     }
 
     public void ConnectToIP()
     {
         networkAddress = _inputAddress.text == "" ? "localhost" : _inputAddress.text;
-        _playerUsername = _inputUsername.text == "" ? "Bomberman" : _inputUsername.text;
+        //_playerUsername = _inputUsername.text == "" ? "Bomberman" : _inputUsername.text;
         StartClient();
         _mainMenu.SetActive(false);
         _connectionMenu.SetActive(true);
@@ -95,18 +95,21 @@ public class CustomNetworkManager : NetworkManager
 
     public override void OnServerAddPlayer(NetworkConnection conn)
     {
-        var startPosition = GetStartPosition();
-        var player = Instantiate(_whitePlayerPrefab, startPosition);
-        player.name = $"{_playerUsername} [connId={conn.connectionId}]" ;
+        //var startPosition = GetStartPosition();
+        //var player = Instantiate(_whitePlayerPrefab, startPosition);
+        //player.name = $"{_playerUsername} [connId={conn.connectionId}]" ;
+        var startPos = GetStartPosition();
+        var player = startPos != null
+            ? Instantiate(playerPrefab, startPos.position, startPos.rotation)
+            : Instantiate(playerPrefab);
+        player.name = $"{playerPrefab.name} [connId={conn.connectionId}]";
         NetworkServer.AddPlayerForConnection(conn, player);
-        var playerScript = player.GetComponent<PlayerControl>();
-        playerScript.grid = _grid;
         _playerCount++;
-        players.Add(_playerCount, playerScript);
+        players.Add(_playerCount, player.GetComponent<PlayerControl>());
         //print("SERVER: player grid instance" + playerScript.grid);
     }
 
-    private void InitGrid()
+    /*private void InitGrid()
     {
         _grid = GameObject.Find("Grid"); 
         _gridScript = _grid.GetComponent<GridScript>();
@@ -121,7 +124,6 @@ public class CustomNetworkManager : NetworkManager
     public void OnLayBombCommand(GameObject player)
     {
         //print("Hello this is the server : A client ask to lay a bomb");
-        print(_bombReferenceTilemap);
         var bombPrefab = spawnPrefabs[0];
         var pos = player.GetComponent<Rigidbody2D>().position;
         var cell = _bombReferenceTilemap.WorldToCell(pos);
@@ -154,7 +156,7 @@ public class CustomNetworkManager : NetworkManager
             InitGrid();
             print("Grid inited");
         }
-    }
+    }*/
 
     public override void OnServerConnect(NetworkConnection conn)
     {

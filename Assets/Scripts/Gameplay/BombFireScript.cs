@@ -10,16 +10,18 @@ public class BombFireScript : NetworkBehaviour
     private void OnTriggerEnter2D(Collider2D other)
     {
         if (!isServer) return;
-        var player = other.GetComponent<PlayerControl>();
-        if (player != null)
+
+        
+        if (other.GetComponent<PlayerControl>() != null)
         {
+            var player = other.GetComponent<PlayerControl>();
             player.Kill();
         }
-
-        var breakableBlock = other.GetComponent<BreakableBlockScript>();
-        if (breakableBlock != null)
+        
+        if (other.GetComponent<BreakableBlockScript>() != null)
         {
-            breakableBlock.DestroyBlock();
+            var breakableBlock = other.GetComponent<BreakableBlockScript>();
+            breakableBlock.RpcDestroyBlock();
         }
     }
 

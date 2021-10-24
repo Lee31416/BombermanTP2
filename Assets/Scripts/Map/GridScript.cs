@@ -13,7 +13,6 @@ namespace Map
     {
         public int mapSize;
         public int itemCount;
-        public Tile destroyableTile;
         public Tile wallTile;
         public Tilemap _wallTilemap;
         public string[,] grid;

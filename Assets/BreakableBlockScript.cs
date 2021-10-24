@@ -6,7 +6,8 @@ using UnityEngine;
 public class BreakableBlockScript : NetworkBehaviour
 {
 
-    public void DestroyBlock()
+    [ClientRpc]
+    public void RpcDestroyBlock()
     {
         Destroy(gameObject);
         NetworkServer.Destroy(gameObject);

@@ -9,6 +9,8 @@ public class ItemScript : NetworkBehaviour
 {
     private void OnTriggerEnter2D(Collider2D other)
     {
+        if (!isServer) return;
+        
         var player = other.GetComponent<PlayerControl>();
         switch (name)
         {
@@ -32,6 +34,12 @@ public class ItemScript : NetworkBehaviour
                 break;
         }
         
+        RpcDestroyItem();
+    }
+    
+    [ClientRpc]
+    private void RpcDestroyItem()
+    {
         Destroy(gameObject);
         NetworkServer.Destroy(gameObject);
     }

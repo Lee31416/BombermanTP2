@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 8896624063568716715}
   - component: {fileID: 6564222244673140286}
   - component: {fileID: -1041922469715782042}
+  - component: {fileID: -6834621939189909183}
   m_Layer: 0
   m_Name: FireLeft
   m_TagString: Untagged
@@ -117,6 +118,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cfa15867c35c2094f912e738deb22e55, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  syncMode: 0
+  syncInterval: 0.1
 --- !u!61 &6564222244673140286
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -160,3 +163,24 @@ MonoBehaviour:
   visible: 0
   m_AssetId: fa98dace570ad5044bac4330e6cda624
   hasSpawned: 0
+--- !u!50 &-6834621939189909183
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4420243662325516165}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 0.0001
+  m_LinearDrag: 0
+  m_AngularDrag: 0
+  m_GravityScale: 0
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0

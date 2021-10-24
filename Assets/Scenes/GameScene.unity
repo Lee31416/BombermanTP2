@@ -728,8 +728,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed9afed434918304e99bd413f71c73d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _tilemap: {fileID: 1079607498}
-  tile: {fileID: 11400000, guid: 8dc082ff56169a7469b8f83ea1832cc6, type: 2}
+  _breakableBlockPrefab: {fileID: 5867947765101357760, guid: ea00790d0fdb2914eb97aab7da4e4670, type: 3}
 --- !u!483693784 &1079607504
 TilemapRenderer:
   m_ObjectHideFlags: 0

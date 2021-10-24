@@ -11,8 +11,16 @@ public class BombFireScript : NetworkBehaviour
     {
         if (!isServer) return;
         var player = other.GetComponent<PlayerControl>();
-        if (player == null) return;
-        player.Kill();
+        if (player != null)
+        {
+            player.Kill();
+        }
+
+        var breakableBlock = other.GetComponent<BreakableBlockScript>();
+        if (breakableBlock != null)
+        {
+            breakableBlock.DestroyBlock();
+        }
     }
 
     [Command(requiresAuthority = false)]

@@ -42,8 +42,10 @@ namespace Player
             _tilemap = _grid.GetComponentInChildren<Tilemap>();
             _grid.GetComponentInChildren<MapGenerator>().GenerateMap();
             _grid.GetComponentInChildren<WallGenerator>().GenerateWalls();
-            //_grid.GetComponentInChildren<BreakableBlockGenerator>().GenerateBreakableBlocks();
-            //_grid.GetComponentInChildren<ItemGeneratorScript>().GenerateItemAtRandom();
+
+            if (!isServer) return;
+            _grid.GetComponentInChildren<ItemGeneratorScript>().GenerateItemAtRandom();
+            _grid.GetComponentInChildren<BreakableBlockGenerator>().GenerateBreakableBlocks();
         }
 
         public override void OnStartLocalPlayer()

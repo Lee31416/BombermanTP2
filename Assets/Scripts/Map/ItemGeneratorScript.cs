@@ -27,7 +27,7 @@ namespace Map
                 var gridX =  _random.Next(0, grid.mapSize);
                 var gridY = _random.Next(0, grid.mapSize);
 
-                if (grid.grid[gridX, gridY] == "[W]" || (gridX == 0 && gridY == 0) || grid.grid[gridX, gridY] == "[I]")
+                if (grid.grid[gridX, gridY] == "[W]" || grid.grid[gridX, gridY] == "[I]")
                 {
                     continue;
                 }

@@ -78,9 +78,6 @@ namespace Map
 
         public void DestroyTiles(Vector3 pos, int firepower)
         {
-            var currentCell = _wallTilemap.WorldToCell(pos);
-            
-            DestroyTile(currentCell);
             DetectWallsBeforeExplosion(pos, firepower, "Up");
             DetectWallsBeforeExplosion(pos, firepower, "Down");
             DetectWallsBeforeExplosion(pos, firepower, "Left");
@@ -132,14 +129,14 @@ namespace Map
                     }
                 }
                 
-                if (!DestroyTile(tilemapCellPosition))
+                /*if (!DestroyTile(tilemapCellPosition))
                 {
                     break;
-                }
+                }*/
             }
         }
 
-        private bool DestroyTile(Vector3Int cell)
+        /*private bool DestroyTile(Vector3Int cell)
         {
             var tile = _wallTilemap.GetTile<Tile>(cell);
 
@@ -154,7 +151,7 @@ namespace Map
             }
 
             return true;
-        }
+        }*/
 
         private bool CreateFire(Vector3 worldCell, FireType fireType, string direction, Vector3Int tilemapCell)
         {

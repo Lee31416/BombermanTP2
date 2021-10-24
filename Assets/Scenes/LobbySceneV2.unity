@@ -1340,6 +1340,7 @@ MonoBehaviour:
   - {fileID: 353167404840786348, guid: 7d32c2758ad4a374e81c9e1b27e03d3f, type: 3}
   - {fileID: 6058865797509378131, guid: 7841122ce281bca4b9ed7aa87c30f3d2, type: 3}
   - {fileID: 8283411733180869256, guid: 7fad5b895eea76d479d02cb193a27771, type: 3}
+  - {fileID: 5867947765101357760, guid: ea00790d0fdb2914eb97aab7da4e4670, type: 3}
   _inputAddress: {fileID: 567232431}
   _inputUsername: {fileID: 195824532}
   _mainMenu: {fileID: 1896771298}

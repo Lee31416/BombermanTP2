@@ -38,8 +38,10 @@ namespace Gameplay
                 RpcExplodeBombOnAllClients();
             else
                 CmdExplodeBomb();
-            /*var identity = _bombLayer.GetComponent<NetworkIdentity>();
-            RpcDecrementPlayerBombCount(identity.connectionToClient);*/
+            
+            print(_bombLayer);
+            var identity = _bombLayer.GetComponent<NetworkIdentity>();
+            RpcDecrementPlayerBombCount(identity.connectionToClient);
         }
         
         //For now to fix this 

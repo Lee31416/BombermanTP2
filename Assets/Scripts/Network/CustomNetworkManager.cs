@@ -16,7 +16,6 @@ public class CustomNetworkManager : NetworkManager
     [SerializeField] private InputField _inputUsername;
     [SerializeField] private GameObject _mainMenu;
     [SerializeField] private GameObject _connectionMenu;
-    [SerializeField] private GameObject _whitePlayerPrefab;
     [SerializeField] private TextMeshProUGUI _connectionMenuTitle;
 
     private int _playerCount;
@@ -109,54 +108,11 @@ public class CustomNetworkManager : NetworkManager
         //print("SERVER: player grid instance" + playerScript.grid);
     }
 
-    /*private void InitGrid()
-    {
-        _grid = GameObject.Find("Grid"); 
-        _gridScript = _grid.GetComponent<GridScript>();
-        _gridScript.InitializeSauce();
-        _grid.GetComponentInChildren<MapGenerator>().GenerateMap(_gridScript);
-        _grid.GetComponentInChildren<WallGenerator>().GenerateWalls(_gridScript);
-        _grid.GetComponentInChildren<BreakableBlockGenerator>().GenerateBreakableBlocks(_gridScript);
-        _grid.GetComponentInChildren<ItemGeneratorScript>().GenerateItemAtRandom(_gridScript);
-        _bombReferenceTilemap = _grid.GetComponentInChildren<Tilemap>();
-    }
-    
-    public void OnLayBombCommand(GameObject player)
-    {
-        //print("Hello this is the server : A client ask to lay a bomb");
-        var bombPrefab = spawnPrefabs[0];
-        var pos = player.GetComponent<Rigidbody2D>().position;
-        var cell = _bombReferenceTilemap.WorldToCell(pos);
-        var cellCenterPos = _bombReferenceTilemap.GetCellCenterWorld(cell);
-        var bomb = Instantiate(bombPrefab, cellCenterPos, Quaternion.identity);
-        var bombScript = bomb.GetComponent<BombScript>();
-        var playerScript = player.GetComponent<PlayerControl>();
-            
-        bombScript.firepower = playerScript.firepowerCount;
-        bombScript.grid = _gridScript;
-        bombScript.bombLayer = playerScript;
-        playerScript.currentPlacedBombCount++;
-            
-        NetworkServer.Spawn(bomb);
-            
-        //print("Server : Hello i shat a bomb where player told me to");
-    }
 
     public void OnCreateFireCommand(GameObject fireInstance)
     {
         NetworkServer.Spawn(fireInstance);
     }
-
-    public override void OnServerSceneChanged(string sceneName)
-    {
-        //print("Server: Changed scene to -> " + sceneName);
-
-        if (sceneName == "Assets/Scenes/GameScene.unity")
-        {
-            InitGrid();
-            print("Grid inited");
-        }
-    }*/
 
     public override void OnServerConnect(NetworkConnection conn)
     {
@@ -169,6 +125,4 @@ public class CustomNetworkManager : NetworkManager
         base.OnServerDisconnect(conn);
         _playerCount--;
     }
-    
-
 }

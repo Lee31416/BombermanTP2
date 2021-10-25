@@ -1259,7 +1259,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1120726460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1345,7 +1345,6 @@ MonoBehaviour:
   _inputUsername: {fileID: 195824532}
   _mainMenu: {fileID: 1896771298}
   _connectionMenu: {fileID: 1772477611}
-  _whitePlayerPrefab: {fileID: 8225810631656338820, guid: d383d61c0a507e744ba552614a3ccc65, type: 3}
   _connectionMenuTitle: {fileID: 859939439}
 --- !u!1 &1190800288
 GameObject:
@@ -1481,6 +1480,133 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1190800288}
   m_CullTransparentMesh: 1
+--- !u!1 &1197179243
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1197179247}
+  - component: {fileID: 1197179246}
+  - component: {fileID: 1197179245}
+  - component: {fileID: 1197179244}
+  m_Layer: 0
+  m_Name: NetworkRoomManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1197179244
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197179243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b0fecffa3f624585964b0d0eb21b18e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Port: 7777
+  DualMode: 1
+  NoDelay: 1
+  Interval: 10
+  Timeout: 10000
+  FastResend: 2
+  CongestionWindow: 0
+  SendWindowSize: 4096
+  ReceiveWindowSize: 4096
+  NonAlloc: 1
+  debugLog: 0
+  statisticsGUI: 0
+  statisticsLog: 0
+--- !u!114 &1197179245
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197179243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e7d8650c751710349bb9546d1697b9cb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dontDestroyOnLoad: 1
+  PersistNetworkManagerToOfflineScene: 0
+  runInBackground: 1
+  autoStartServerBuild: 1
+  serverTickRate: 30
+  offlineScene: Assets/Scenes/LobbySceneV2.unity
+  onlineScene: Assets/Scenes/RoomScene.unity
+  transport: {fileID: 1197179244}
+  networkAddress: localhost
+  maxConnections: 5
+  disconnectInactiveConnections: 0
+  disconnectInactiveTimeout: 60
+  authenticator: {fileID: 0}
+  playerPrefab: {fileID: 8225810631656338820, guid: d383d61c0a507e744ba552614a3ccc65, type: 3}
+  autoCreatePlayer: 1
+  playerSpawnMethod: 1
+  spawnPrefabs:
+  - {fileID: 1815136930890440455, guid: cc0caece896c6ae4c94a6a9b48069fdb, type: 3}
+  - {fileID: 353167404840786348, guid: 7d32c2758ad4a374e81c9e1b27e03d3f, type: 3}
+  - {fileID: 6058865797509378131, guid: 7841122ce281bca4b9ed7aa87c30f3d2, type: 3}
+  - {fileID: 8283411733180869256, guid: 7fad5b895eea76d479d02cb193a27771, type: 3}
+  - {fileID: 5867947765101357760, guid: ea00790d0fdb2914eb97aab7da4e4670, type: 3}
+  - {fileID: 4777326624946873857, guid: f9aba8abe5539fc4d8898e03c84a134a, type: 3}
+  - {fileID: 5069997242613938472, guid: 314b8a30846fbab418efe12854550073, type: 3}
+  - {fileID: 2451029628260929730, guid: 7bcf06581da62094aba72f53da691426, type: 3}
+  - {fileID: 7812703158812915961, guid: b04bb8c9fbcabe64d9319d97885d5f8f, type: 3}
+  - {fileID: 5586946144942233096, guid: 20fe56cded18f7f43b5c5bbbf238ea76, type: 3}
+  - {fileID: 1870033820919019697, guid: 30ba77d71c7b09d48b61ca0f9adcffc5, type: 3}
+  - {fileID: 4420243662325516165, guid: fa98dace570ad5044bac4330e6cda624, type: 3}
+  - {fileID: 8476470912870760939, guid: a7eaf9cffa13ff74084916ca67902ed2, type: 3}
+  showRoomGUI: 1
+  minPlayers: 1
+  roomPlayerPrefab: {fileID: 114033720796874720, guid: deae2134a1d77704b9c595efe69767dd, type: 3}
+  RoomScene: Assets/Scenes/RoomScene.unity
+  GameplayScene: Assets/Scenes/GameScene.unity
+  _allPlayersReady: 0
+  roomSlots: []
+  clientIndex: 0
+  _inputAddress: {fileID: 0}
+  _mainMenu: {fileID: 1896771298}
+  _connectionMenu: {fileID: 1772477611}
+  _connectionMenuTitle: {fileID: 0}
+--- !u!114 &1197179246
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197179243}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6442dc8070ceb41f094e44de0bf87274, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  showGUI: 1
+  offsetX: 0
+  offsetY: 0
+--- !u!4 &1197179247
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1197179243}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1214529777
 GameObject:
   m_ObjectHideFlags: 0
@@ -2976,7 +3102,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2138553678
 MonoBehaviour:
   m_ObjectHideFlags: 0

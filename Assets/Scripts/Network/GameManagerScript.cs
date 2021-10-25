@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Mirror;
+using Mirror.Examples.NetworkRoom;
 using Player;
 using TMPro;
 using UnityEngine;
@@ -17,13 +18,13 @@ namespace Network
         [SerializeField] private GameObject _winUi;
         [SerializeField] private TextMeshProUGUI _winnerNameText;
  
-        private CustomNetworkManager _manager;
+        private NetworkRoomManagerExt _manager;
         private Dictionary<int, PlayerControl> _alivePlayers = new Dictionary<int, PlayerControl>();
 
         private void Start()
         {
             if (!isServer) return;
-            _manager = NetworkManager.singleton.GetComponentInChildren<CustomNetworkManager>();
+            _manager = NetworkManager.singleton.GetComponentInChildren<NetworkRoomManagerExt>();
             _alivePlayers = _manager.players;
             StartCoroutine(GameLoop());
         }

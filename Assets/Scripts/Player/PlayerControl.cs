@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Camera;
 using Gameplay;
 using Map;
@@ -21,9 +22,17 @@ namespace Player
         
         private Vector2 _movement;
         private bool _isMoving = false;
+        
+        [SyncVar]
         public int firepowerCount = 1;
+        
+        [SyncVar]
         public int rollerbladeCount = 1;
+        
+        [SyncVar]
         public int bombCount = 1;
+        
+        [SyncVar]
         public int currentPlacedBombCount = 0;
         public float _speed;
 
@@ -97,13 +106,29 @@ namespace Player
         [Command]
         private void CmdLayBomb(NetworkIdentity networkIdentity, Vector3 cellCenterPos)
         {
+            var player = networkIdentity.gameObject.GetComponent<PlayerControl>();
             var bomb = Instantiate(_bombPrefab, cellCenterPos, Quaternion.identity);
             var bombScript = bomb.GetComponent<BombScript>();
             
-            bombScript.firepower = firepowerCount;
-            bombScript.bombLayer = this;
-            currentPlacedBombCount++;
+            bombScript.firepower = player.firepowerCount;
+            StartCoroutine(DecrementPlayerBombCount(player));
+            //RpcSetBombLayer(networkIdentity.connectionToClient, networkIdentity, bombScript.GetComponent<NetworkIdentity>());
+            player.currentPlacedBombCount++;
             NetworkServer.Spawn(bomb);
+        }
+
+        /*
+        [TargetRpc]
+        private void RpcSetBombLayer(NetworkConnection target, NetworkIdentity networkIdentity, NetworkIdentity bombIdentity)
+        {
+            var bomb = bombIdentity.gameObject.GetComponent<BombScript>();
+            bomb.bombLayer = networkIdentity.GetComponent<PlayerControl>();
+        }*/
+
+        private IEnumerator DecrementPlayerBombCount(PlayerControl player)
+        {
+            yield return new WaitForSeconds(4);
+            player.currentPlacedBombCount--;
         }
 
         private void Move()

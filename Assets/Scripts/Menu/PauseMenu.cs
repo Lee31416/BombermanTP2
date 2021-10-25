@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Mirror.Examples.NetworkRoom;
 using Player;
 using TMPro;
 using UnityEngine;
@@ -15,11 +16,11 @@ public class PauseMenu : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI _networkInfo;
     
-    private CustomNetworkManager _networkManager;
+    private NetworkRoomManagerExt _networkManager;
 
     private void Start()
     {
-        _networkManager = GameObject.Find("NetworkManager").GetComponent<CustomNetworkManager>();
+        _networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkRoomManagerExt>();
     }
 
     private void Update()

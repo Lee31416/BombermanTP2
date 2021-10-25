@@ -34,12 +34,8 @@ namespace Map
         
         private Dictionary<string, GameObject> fireEnds = new Dictionary<string, GameObject>();
         private Dictionary<string, GameObject> fireExtensions = new Dictionary<string, GameObject>();
-        private WallGenerator _wallGenerator;
-        private MapGenerator mapGenerator;
-        private ItemGeneratorScript itemGenerator;
-        private BreakableBlockGenerator breakableBlock;
 
-        public void Start()
+        public void Awake()
         {
             if (mapSize % 2 == 0)
             {

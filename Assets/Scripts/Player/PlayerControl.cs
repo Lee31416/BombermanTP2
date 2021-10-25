@@ -35,7 +35,10 @@ namespace Player
 
         [SyncVar]
         private bool _isAlive = true;
+        public bool isAlive => _isAlive;
         
+        private bool _isControllable = true;
+
         public void Start()
         {
             _grid = GameObject.Find("Grid");
@@ -65,7 +68,8 @@ namespace Player
         private void Update()
         {
             if (!isLocalPlayer) return;
-       
+            if (!_isControllable) return;
+            
             _speed = rollerbladeCount;
 
             if (Input.GetKeyDown("space") && currentPlacedBombCount < bombCount)
@@ -85,6 +89,8 @@ namespace Player
 
         private void FixedUpdate()
         {
+            if (!isLocalPlayer) return;
+            if (!_isControllable) return;
             Move();
         }
 
@@ -121,6 +127,18 @@ namespace Player
             _rb.velocity = new Vector2(5, 5);
             _rb.simulated = false;
             enabled = false;
+        }
+
+        [ClientRpc]
+        public void RpcFreezeAllClient()
+        {
+            _isControllable = false;
+        }
+        
+        [ClientRpc]
+        public void RpcUnFreezeAllClient()
+        {
+            _isControllable = true;
         }
     }
 }

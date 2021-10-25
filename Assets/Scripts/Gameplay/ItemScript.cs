@@ -12,6 +12,8 @@ public class ItemScript : NetworkBehaviour
         if (!isServer) return;
         
         var player = other.GetComponent<PlayerControl>();
+        if (player == null) return;
+        
         switch (name)
         {
             case "FireItem(Clone)":

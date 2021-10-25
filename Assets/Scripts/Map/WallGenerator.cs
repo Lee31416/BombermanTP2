@@ -34,6 +34,8 @@ namespace Map
 
             if (x % 2 != 1 || y % 2 != 1) return;
             tilemap.SetTile(position, wall);
+            /*print(grid);
+            print(grid.grid);*/
             grid.grid[x, y] = "[W]";
         }
 

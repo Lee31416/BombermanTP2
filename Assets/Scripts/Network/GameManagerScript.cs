@@ -1,5 +1,10 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using Mirror;
+using Player;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,52 +14,96 @@ namespace Network
     {
         [SerializeField] private GameObject _gameUi;
         [SerializeField] private GameObject _roundUi;
-        private CustomNetworkManager _networkManager;
-        
+        [SerializeField] private GameObject _winUi;
+        [SerializeField] private TextMeshProUGUI _winnerNameText;
+ 
+        private CustomNetworkManager _manager;
+        private Dictionary<int, PlayerControl> _alivePlayers = new Dictionary<int, PlayerControl>();
+
         private void Start()
         {
-            var temp = GameObject.Find("NetworkManager");
-            _networkManager = temp.GetComponent<CustomNetworkManager>();
+            if (!isServer) return;
+            _manager = NetworkManager.singleton.GetComponentInChildren<CustomNetworkManager>();
+            _alivePlayers = _manager.players;
             StartCoroutine(GameLoop());
         }
-        
+
         private IEnumerator GameLoop()
         {
             yield return StartCoroutine(RoundStarting());
             yield return StartCoroutine(RoundPlaying());
             yield return StartCoroutine(RoundEnding());
-            
-                     
-           
         }
 
         private IEnumerator RoundStarting()
         {
-            //TODO Update timer
+            yield return new WaitForSeconds(15);
             EnableAllPlayers();
-            yield return null;
+            print("Starting Game now");
         }
-
-
 
         private IEnumerator RoundPlaying()
         {
             //TODO Update timer
-            yield return null;
+            
+            while (!IsOnePlayerLeft())
+            { 
+                yield return null;
+            }
         }
         
         private IEnumerator RoundEnding()
         {
-            //TODO Update timer
-            yield return null;
+            DisableAllPlayers();
+            print("Game ending now");
+            
+            ShowWinUi(GetGameWinner());
+            
+            yield return new WaitForSeconds(2);
+        }
+
+        [ClientRpc]
+        private void ShowWinUi(PlayerControl winner)
+        {
+            _winnerNameText.text = winner.name;
+            _winUi.SetActive(true);
         }
         
         private void EnableAllPlayers()
         {
-            foreach (var player in _networkManager.players)
+            foreach (var player in _manager.players)
             {
-                player.Value.enabled = true;
+                player.Value.RpcUnFreezeAllClient();
             }
+        }
+        
+        private void DisableAllPlayers()
+        {
+            foreach (var player in _manager.players)
+            {
+                player.Value.RpcFreezeAllClient();
+            }
+        }
+        
+        private PlayerControl GetGameWinner()
+        {
+            return _manager.players.Where(player => player.Value.isAlive).Select(player => player.Value).FirstOrDefault();
+            
+            //return _alivePlayers[0];
+        }
+        
+        private bool IsOnePlayerLeft()
+        {
+            var alivePlayerCount = _manager.players.Count;
+            var temp = _manager.players.ToList();
+            foreach (var player in temp)
+            {
+                
+                if (player.Value.isAlive) continue;
+                alivePlayerCount--;
+                _alivePlayers.Remove(player.Key);
+            }
+            return alivePlayerCount <= 1;
         }
     }
 }

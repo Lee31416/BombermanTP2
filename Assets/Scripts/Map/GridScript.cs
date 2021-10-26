@@ -1,10 +1,8 @@
 using System.Collections.Generic;
-using System.Numerics;
 using Mirror;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Quaternion = UnityEngine.Quaternion;
-using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
 namespace Map
@@ -26,10 +24,10 @@ namespace Map
         [SerializeField] private GameObject _fireEndLeft;
         [SerializeField] private GameObject _fireEndRight;
         
-        public enum FireType
+        private enum FireType
         {
-            Ends = 1,
-            Extensions = 2
+            Extensions = 1,
+            Ends = 2
         }
         
         private Dictionary<string, GameObject> fireEnds = new Dictionary<string, GameObject>();
@@ -113,40 +111,18 @@ namespace Map
                 {
                     if (!CreateFire(worldCellPosition, FireType.Ends, direction,tilemapCellPosition))
                     {
-                        break;
+                        return;
                     }
                 }
                 else
                 {
                     if (!CreateFire(worldCellPosition, FireType.Extensions, direction,tilemapCellPosition))
                     { 
-                        break;
+                        return;
                     }
                 }
-                
-                /*if (!DestroyTile(tilemapCellPosition))
-                {
-                    break;
-                }*/
             }
         }
-
-        /*private bool DestroyTile(Vector3Int cell)
-        {
-            var tile = _wallTilemap.GetTile<Tile>(cell);
-
-            if (tile == wallTile)
-            {
-                return false;
-            }
-            
-            if (tile == destroyableTile)
-            {
-                _wallTilemap.SetTile(cell, null);
-            }
-
-            return true;
-        }*/
 
         private bool CreateFire(Vector3 worldCell, FireType fireType, string direction, Vector3Int tilemapCell)
         {

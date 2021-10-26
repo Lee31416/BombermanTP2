@@ -13,8 +13,7 @@ namespace Network
 {
     public class GameManagerScript: NetworkBehaviour
     {
-        [SerializeField] private GameObject _gameUi;
-        [SerializeField] private GameObject _roundUi;
+        [SerializeField] private GameObject _waitingStartUi;
         [SerializeField] private GameObject _winUi;
         [SerializeField] private TextMeshProUGUI _winnerNameText;
  
@@ -24,11 +23,8 @@ namespace Network
         private void Start()
         {
             if (!isServer) return;
-            
-            print("Starting game manager");
-            
+
             _manager = NetworkManager.singleton.GetComponentInChildren<NetworkRoomManagerExt>();
-            _alivePlayers = _manager.players;
 
             StartCoroutine(GameLoop());
         }
@@ -44,9 +40,17 @@ namespace Network
 
         private IEnumerator RoundStarting()
         {
-            yield return new WaitForSeconds(10);
+            yield return new WaitForSeconds(7);
+            
+            RpcDeactivateWaitingUi();
             EnableAllPlayers();
-            print("Starting Game now");
+        }
+
+        [ClientRpc]
+        private void RpcDeactivateWaitingUi()
+        {
+            _waitingStartUi.SetActive(false);
+
         }
 
         private IEnumerator RoundPlaying()
@@ -55,25 +59,21 @@ namespace Network
             
             while (!IsOnePlayerLeft())
             { 
-                print("more than 1 player left");
                 yield return null;
             }
-            
-            print("1 player left... ending");
         }
         
         private IEnumerator RoundEnding()
         {
-            DisableAllPlayers();
-            print("Game ending now");
-            
-            ShowWinUi(GetGameWinner());
-            
             yield return new WaitForSeconds(2);
+            
+            DisableAllPlayers();
+            
+            RpcShowWinUi(GetGameWinner());
         }
 
         [ClientRpc]
-        private void ShowWinUi(PlayerControl winner)
+        private void RpcShowWinUi(PlayerControl winner)
         {
             _winnerNameText.text = winner == null ? "Tie" : winner.name;
             _winUi.SetActive(true);
@@ -85,8 +85,6 @@ namespace Network
             {
                 player.Value.RpcUnFreezeAllClient();
             }
-            
-            print("Unfrozed everyone");
         }
         
         private void DisableAllPlayers()
@@ -95,8 +93,6 @@ namespace Network
             {
                 player.Value.RpcFreezeAllClient();
             }
-            
-            print("frozed everyone");
         }
         
         private PlayerControl GetGameWinner()

@@ -11,20 +11,13 @@ namespace Gameplay
     {
         [SerializeField] private Animator _animator;
         
-        private PlayerControl _bombLayer;
-        private bool _animationFinished = false;
-        
         [SyncVar]
-        private bool _hasExploded = false;
-        
-        public PlayerControl bombLayer
-        {
-            set => _bombLayer = value;
-        }
+        private bool _hasExploded;
+        private bool _animationFinished = false;
 
-        public int firepower { get; set; } = 1;
+        public int firepower { get; set; }
 
-        void Start()
+        private void Start()
         {
             StartCoroutine(Explode());
         }

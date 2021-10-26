@@ -1,12 +1,9 @@
-using System;
 using System.Collections;
 using Camera;
 using Gameplay;
 using Map;
 using Mirror;
-using Network;
 using UnityEngine;
-using UnityEngine.Serialization;
 using UnityEngine.Tilemaps;
 
 namespace Player
@@ -34,7 +31,8 @@ namespace Player
         
         [SyncVar]
         public int currentPlacedBombCount = 0;
-        public float _speed;
+        
+        private float _speed;
 
         private CameraControl _cameraControl;
         private ItemCountScript[] _uiCounters;
@@ -42,10 +40,10 @@ namespace Player
         private GameObject _grid;
         private Tilemap _tilemap;
 
+        [field: SyncVar]
+        public bool isAlive { get; private set; } = true;
+
         [SyncVar]
-        private bool _isAlive = true;
-        public bool isAlive => _isAlive;
-        
         private bool _isControllable = true;
 
         public void Start()
@@ -78,13 +76,15 @@ namespace Player
         {
             if (!isLocalPlayer) return;
             if (!_isControllable) return;
+            if (!isAlive) return;
             
-            _speed = rollerbladeCount;
+            _speed = (rollerbladeCount == 1) ? 1 : rollerbladeCount * 0.75f;  
 
             if (Input.GetKeyDown("space") && currentPlacedBombCount < bombCount)
             {
                 var pos = transform.position;
-                var cell = _tilemap.WorldToCell(pos);
+                var newPos = new Vector3(pos.x, pos.y - 0.02f, 0);
+                var cell = _tilemap.WorldToCell(newPos);
                 var cellCenterPos = _tilemap.GetCellCenterWorld(cell);
                 CmdLayBomb(GetComponent<NetworkIdentity>(), cellCenterPos);
             }
@@ -100,6 +100,7 @@ namespace Player
         {
             if (!isLocalPlayer) return;
             if (!_isControllable) return;
+            if (!isAlive) return;
             Move();
         }
 
@@ -111,18 +112,9 @@ namespace Player
             var bombScript = bomb.GetComponent<BombScript>();
             bombScript.firepower = player.firepowerCount;
             StartCoroutine(DecrementPlayerBombCount(player));
-            //RpcSetBombLayer(networkIdentity.connectionToClient, networkIdentity, bombScript.GetComponent<NetworkIdentity>());
             player.currentPlacedBombCount++;
             NetworkServer.Spawn(bomb);
         }
-
-        /*
-        [TargetRpc]
-        private void RpcSetBombLayer(NetworkConnection target, NetworkIdentity networkIdentity, NetworkIdentity bombIdentity)
-        {
-            var bomb = bombIdentity.gameObject.GetComponent<BombScript>();
-            bomb.bombLayer = networkIdentity.GetComponent<PlayerControl>();
-        }*/
 
         private IEnumerator DecrementPlayerBombCount(PlayerControl player)
         {
@@ -140,17 +132,16 @@ namespace Player
         
         public void Kill()
         {
-            _isAlive = false;
-            RpcKillClient();
+            if (!isAlive) return;
+            isAlive = false;
+            RpcKillClient(gameObject.GetComponent<NetworkIdentity>().connectionToClient);
         }
 
         [TargetRpc]
-        private void RpcKillClient()
+        private void RpcKillClient(NetworkConnection target)
         {
-            _animator.SetBool("IsAlive", _isAlive);
-            _rb.velocity = new Vector2(5, 5);
-            _rb.simulated = false;
-            enabled = false;
+            _animator.SetBool("IsAlive", isAlive);
+            _isControllable = false;
         }
 
         [ClientRpc]

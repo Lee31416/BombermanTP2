@@ -38,10 +38,6 @@ namespace Gameplay
                 RpcExplodeBombOnAllClients();
             else
                 CmdExplodeBomb();
-            
-            print(_bombLayer);
-            var identity = _bombLayer.GetComponent<NetworkIdentity>();
-            RpcDecrementPlayerBombCount(identity.connectionToClient);
         }
         
         //For now to fix this 
@@ -58,13 +54,6 @@ namespace Gameplay
             var position = transform.position;
             var grid = GameObject.Find("Grid").GetComponent<GridScript>();
             grid.DestroyTiles(position, firepower);
-        }
-
-        [TargetRpc]
-        private void RpcDecrementPlayerBombCount(NetworkConnection player)
-        {
-            print(_bombLayer);
-            _bombLayer.currentPlacedBombCount--;
         }
 
         private void OnTriggerEnter2D(Collider2D other)

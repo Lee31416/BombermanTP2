@@ -109,7 +109,6 @@ namespace Player
             var player = networkIdentity.gameObject.GetComponent<PlayerControl>();
             var bomb = Instantiate(_bombPrefab, cellCenterPos, Quaternion.identity);
             var bombScript = bomb.GetComponent<BombScript>();
-            
             bombScript.firepower = player.firepowerCount;
             StartCoroutine(DecrementPlayerBombCount(player));
             //RpcSetBombLayer(networkIdentity.connectionToClient, networkIdentity, bombScript.GetComponent<NetworkIdentity>());

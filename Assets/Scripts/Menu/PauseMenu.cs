@@ -20,7 +20,7 @@ public class PauseMenu : MonoBehaviour
 
     private void Start()
     {
-        _networkManager = GameObject.Find("NetworkManager").GetComponent<NetworkRoomManagerExt>();
+        _networkManager = GameObject.Find("NetworkRoomManager").GetComponent<NetworkRoomManagerExt>();
     }
 
     private void Update()

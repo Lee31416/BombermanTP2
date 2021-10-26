@@ -24,13 +24,19 @@ namespace Network
         private void Start()
         {
             if (!isServer) return;
+            
+            print("Starting game manager");
+            
             _manager = NetworkManager.singleton.GetComponentInChildren<NetworkRoomManagerExt>();
             _alivePlayers = _manager.players;
+
             StartCoroutine(GameLoop());
         }
 
         private IEnumerator GameLoop()
         {
+            DisableAllPlayers();
+            
             yield return StartCoroutine(RoundStarting());
             yield return StartCoroutine(RoundPlaying());
             yield return StartCoroutine(RoundEnding());
@@ -38,7 +44,7 @@ namespace Network
 
         private IEnumerator RoundStarting()
         {
-            yield return new WaitForSeconds(15);
+            yield return new WaitForSeconds(10);
             EnableAllPlayers();
             print("Starting Game now");
         }
@@ -49,8 +55,11 @@ namespace Network
             
             while (!IsOnePlayerLeft())
             { 
+                print("more than 1 player left");
                 yield return null;
             }
+            
+            print("1 player left... ending");
         }
         
         private IEnumerator RoundEnding()
@@ -66,7 +75,7 @@ namespace Network
         [ClientRpc]
         private void ShowWinUi(PlayerControl winner)
         {
-            _winnerNameText.text = winner.name;
+            _winnerNameText.text = winner == null ? "Tie" : winner.name;
             _winUi.SetActive(true);
         }
         
@@ -76,6 +85,8 @@ namespace Network
             {
                 player.Value.RpcUnFreezeAllClient();
             }
+            
+            print("Unfrozed everyone");
         }
         
         private void DisableAllPlayers()
@@ -84,13 +95,13 @@ namespace Network
             {
                 player.Value.RpcFreezeAllClient();
             }
+            
+            print("frozed everyone");
         }
         
         private PlayerControl GetGameWinner()
         {
             return _manager.players.Where(player => player.Value.isAlive).Select(player => player.Value).FirstOrDefault();
-            
-            //return _alivePlayers[0];
         }
         
         private bool IsOnePlayerLeft()
@@ -99,7 +110,6 @@ namespace Network
             var temp = _manager.players.ToList();
             foreach (var player in temp)
             {
-                
                 if (player.Value.isAlive) continue;
                 alivePlayerCount--;
                 _alivePlayers.Remove(player.Key);

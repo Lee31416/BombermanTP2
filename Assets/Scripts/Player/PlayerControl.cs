@@ -134,11 +134,11 @@ namespace Player
         {
             if (!isAlive) return;
             isAlive = false;
-            RpcKillClient(gameObject.GetComponent<NetworkIdentity>().connectionToClient);
+            RpcKillClient();
         }
 
-        [TargetRpc]
-        private void RpcKillClient(NetworkConnection target)
+        [ClientRpc]
+        private void RpcKillClient()
         {
             _animator.SetBool("IsAlive", isAlive);
             _isControllable = false;
